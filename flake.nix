@@ -19,9 +19,10 @@
           keys = publicKeys;
           users = keys.users;
           machines = keys.machines;
-          identityPaths = (map
+          identityPathss = (map
             (name: "${identityPath}/${name}.agenix")
             ((builtins.attrNames users) ++ (builtins.attrNames machines)));
+          identityPaths = builtins.trace identityPathss [ ];
         in
         {
           imports = [
