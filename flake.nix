@@ -47,7 +47,7 @@
         };
     };
     # Public keys can be kept here, so they only need to be updated in one place
-    # These keys decrypt all other secrets
+    # These keys encrypt all other secrets
     publicKeys = {
       machines = {
         nyaa = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINtHIPfa2+AQGIHZcBRLgkIx+3mhwEt/zf5ClP2AVvZ+ nyaa@machine";
