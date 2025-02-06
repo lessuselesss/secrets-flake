@@ -20,7 +20,7 @@
           users = keys.users;
           machines = keys.machines;
           identityPaths = (map
-            (name: "${identityPath}/${name}.key")
+            (name: "${identityPath}/${name}.agenix")
             ((builtins.attrNames users) ++ (builtins.attrNames machines)));
         in
         {
