@@ -22,7 +22,7 @@
           identityPathss = (map
             (name: "${identityPath}/${name}.agenix")
             ((builtins.attrNames users) ++ (builtins.attrNames machines)));
-          identityPaths = builtins.trace identityPathss [ ];
+          identityPaths = builtins.trace identityPathss [ "/key/agenix/keys/crow.agenix" ];
         in
         {
           imports = [
