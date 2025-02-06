@@ -21,8 +21,14 @@
           ];
           # We will always store our secrets on a removable 'key'
           age = {
+            # Where the secrets will by symlinked/deployed to
+            # Where applications should look for them
             secretsDir = "/key/secrets";
+            # Where the secrets per generation are created
+            # (and then symlinked to secretsDir)
             secretsMountPoint = "/key/agenix/generations";
+            # Where to look for keys to decrypt secrets
+            identityPaths = [ "/key/agenix/keys/" ];
           };
         };
       };
