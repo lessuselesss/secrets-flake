@@ -4,12 +4,26 @@
     # Our secret keeping scheme
     agenix.url = "github:ryantm/agenix";
   };
-  outputs =
-    { agenix, ... }:
-    {
-      nixosModules = {
-        # Import me to import Agenix and it's bare minimum configuration
-        default = { pkgs, ... }: {
+  outputs = { agenix, ... }: rec {
+    nixosModules = {
+      # Import me to import Agenix and it's bare minimum configuration
+      default = { pkgs, ... }:
+        let
+          keyPath = "/key";
+          secretPath = "${keyPath}/secrets";
+          agenixPath = "${keyPath}/agenix";
+          identityPath = "${agenixPath}/keys";
+          generationPath = "${agenixPath}/generations";
+
+          # Create paths to the Agenix keys that will be used to decrypt secrets
+          keys = publicKeys;
+          users = keys.users;
+          machines = keys.machines;
+          identityPaths = (map
+            (name: "${identityPath}/${name}.key")
+            ((builtins.attrNames users) ++ (builtins.attrNames machines)));
+        in
+        {
           imports = [
             agenix.nixosModules.default
           ];
@@ -23,26 +37,26 @@
           age = {
             # Where the secrets will by symlinked/deployed to
             # Where applications should look for them
-            secretsDir = "/key/secrets";
+            secretsDir = secretPath;
             # Where the secrets per generation are created
             # (and then symlinked to secretsDir)
-            secretsMountPoint = "/key/agenix/generations";
+            secretsMountPoint = generationPath;
             # Where to look for keys to decrypt secrets
-            identityPaths = [ "/key/agenix/keys/" ];
+            inherit identityPaths;
           };
         };
+    };
+    # Public keys can be kept here, so they only need to be updated in one place
+    # These keys decrypt all other secrets
+    publicKeys = {
+      machines = {
+        nyaa = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINtHIPfa2+AQGIHZcBRLgkIx+3mhwEt/zf5ClP2AVvZ+ nyaa@machine";
+        spark = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEDnpWeIBR+QCwclhSqSDKTsYCLYPX0b38lYnKPYBEMM spark@machine";
+        archive = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO6GH/nzYFaruIZ9ZORbBhYEzTHBnrCZXSJUK2rrs1jL archive@machine";
       };
-      # Public keys can be kept here, so they only need to be updated in one place
-      # These keys decrypt all other secrets
-      publicKeys = {
-        machines = {
-          nyaa = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINtHIPfa2+AQGIHZcBRLgkIx+3mhwEt/zf5ClP2AVvZ+ nyaa@machine";
-          spark = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEDnpWeIBR+QCwclhSqSDKTsYCLYPX0b38lYnKPYBEMM spark@machine";
-          archive = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO6GH/nzYFaruIZ9ZORbBhYEzTHBnrCZXSJUK2rrs1jL archive@machine";
-        };
-        users = {
-          crow = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHTsYcLV5djsXoISRIysYrbHOnPHt3SIqtXdiWIJ+m0Y crow@agenix";
-        };
+      users = {
+        crow = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHTsYcLV5djsXoISRIysYrbHOnPHt3SIqtXdiWIJ+m0Y crow@agenix";
       };
     };
+  };
 }
