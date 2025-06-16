@@ -2,9 +2,17 @@
 {
   inputs = {
     # Our secret keeping scheme
-    agenix.url = "github:ryantm/agenix";
+    ragenix.url = "github:yaxitech/ragenix";
+    inputs.agenix-rekey.url = "github:yaxitech/ragenix";
+
+    # for experimenting with
+    git-agecrypt.url = "github.com:vlaci/git-agecrypt":
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
-  outputs = { agenix, ... }: rec {
+  outputs = { agenix, sops-nix, git-agecrypt ... }: rec {
     nixosModules = {
       # Import me to import Agenix and it's bare minimum configuration
       default = { pkgs, ... }:
