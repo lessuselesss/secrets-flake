@@ -1,10 +1,24 @@
 # This flake collates all my host flakes together for convenienc0
 {
   inputs = {
+    nixpkgs = { 
+      url = "https://flakehub.com/f/NixOS/nixpkgs/*"
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     # Our secret keeping scheme
-    ragenix.url = "github:yaxitech/ragenix";
-    inputs.agenix-rekey.url = "github:yaxitech/ragenix";
-
+    agenix = { 
+      url = "github:ryantm/agenix";
+      # optional, not necessary for the module
+      #inputs.agenix.inputs.nixpkgs.follows = "nixpkgs";
+      # optionally choose not to download darwin deps (saves some resources on Linux)
+      inputs.agenix.inputs.darwin.follows = "";
+      
+    };
+    ragenix = {
+      url = "github:yaxitech/ragenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    
     # for experimenting with
     git-agecrypt.url = "github.com:vlaci/git-agecrypt":
     sops-nix = {
